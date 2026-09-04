@@ -55,7 +55,38 @@ Requires: Docker Desktop + WSL2 backend on Windows, NVIDIA driver >= R550,
 and the NVIDIA Container Toolkit enabled in WSL2. (On Linux hosts: install
 `nvidia-container-toolkit` from your distro.)
 
-Build once:
+### Pull the prebuilt image (fastest — no local build)
+
+The GitHub Actions workflow at `.github/workflows/docker.yml` builds and
+publishes to GitHub Container Registry on every push to `main`.
+
+```bash
+docker pull ghcr.io/alisheheryar/nomi-claw:latest
+```
+
+Then run (mount host video + output dirs, expose GPU):
+
+```bash
+docker run --rm --gpus all \
+  -v "$PWD/models:/models" \
+  -v "$PWD/videos:/videos:ro" \
+  -v "$PWD/out:/app/out" \
+  ghcr.io/alisheheryar/nomi-claw:latest \
+  python nomi_claw.py /videos/wedding.mp4 --target-seconds 45
+```
+
+Windows PowerShell equivalent:
+
+```powershell
+docker run --rm --gpus all `
+  -v "${PWD}\models:/models" `
+  -v "${PWD}\videos:/videos:ro" `
+  -v "${PWD}\out:/app/out" `
+  ghcr.io/alisheheryar/nomi-claw:latest `
+  python nomi_claw.py /videos/wedding.mp4 --target-seconds 45
+```
+
+### Build locally instead
 
 ```bash
 docker compose build
