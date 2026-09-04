@@ -1,0 +1,11 @@
+torch
+torchvision
+transformers>=4.49,<4.52
+accelerate
+autoawq
+qwen-vl-utils
+av
+decord
+ffmpeg-python
+scenedetect[opencv]
+pillow
