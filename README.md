@@ -35,6 +35,30 @@ This creates `.venv`, installs deps, and downloads the model (~5–6 GB) into `.
 python ground_video.py "C:\path\to\wedding.mp4"
 ```
 
+## Docker (alternative to venv install)
+
+Requires: Docker Desktop + WSL2 backend on Windows, NVIDIA driver >= R550,
+and the NVIDIA Container Toolkit enabled in WSL2. (On Linux hosts: install
+`nvidia-container-toolkit` from your distro.)
+
+Build once:
+
+```bash
+docker compose build
+```
+
+Put source videos in `./videos/`, then run:
+
+```bash
+docker compose run --rm nomi-claw python nomi_claw.py /videos/wedding.mp4 --target-seconds 45
+```
+
+Outputs land in `./out/<video-stem>/highlight.mp4`. The model cache lives in
+`./models/` on the host and survives container recreation.
+
+Flags work exactly as in the venv install (`--small`, `--fps`, `--target-seconds`,
+`--out`). Paths inside the container: `/videos` (read-only), `/app/out`, `/models`.
+
 Common flags:
 - `--target-seconds 60`  — aim for ~60 s highlight (default 45)
 - `--small`              — use 3B model if 7B OOMs

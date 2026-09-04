@@ -1,0 +1,10 @@
+.venv/
+models/
+out/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+bootstrap.ps1
+setup.ps1
+*.md
