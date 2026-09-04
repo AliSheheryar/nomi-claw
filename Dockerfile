@@ -34,7 +34,7 @@ RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/c
 RUN pip install \
       "transformers>=4.49,<4.52" \
       accelerate \
-      autoawq \
+      bitsandbytes \
       qwen-vl-utils \
       av \
       decord \

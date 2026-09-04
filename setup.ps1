@@ -32,7 +32,7 @@ Write-Host "==[5/7]== python deps"
 pip install `
     "transformers>=4.49,<4.52" `
     accelerate `
-    autoawq `
+    bitsandbytes `
     qwen-vl-utils `
     av `
     decord `
@@ -43,9 +43,9 @@ pip install `
 Write-Host "==[6/7]== CUDA visibility check"
 python -c "import torch; assert torch.cuda.is_available(), 'CUDA not visible to torch'; print('CUDA OK:', torch.cuda.get_device_name(0), '| VRAM GB:', round(torch.cuda.get_device_properties(0).total_memory/1e9,1))"
 
-Write-Host "==[7/7]== Pre-downloading Qwen2.5-VL-7B-Instruct-AWQ to .\models  (this is ~5-6 GB)"
+Write-Host "==[7/7]== Pre-downloading Qwen2.5-VL-7B-Instruct to .\models  (this is ~5-6 GB)"
 $env:HF_HOME = (Resolve-Path .\models).Path
-python -c "from transformers import AutoProcessor, AutoModelForImageTextToText; m='Qwen/Qwen2.5-VL-7B-Instruct-AWQ'; AutoProcessor.from_pretrained(m); AutoModelForImageTextToText.from_pretrained(m); print('model cached')"
+python -c "from transformers import AutoProcessor, AutoModelForImageTextToText; m='Qwen/Qwen2.5-VL-7B-Instruct'; AutoProcessor.from_pretrained(m); AutoModelForImageTextToText.from_pretrained(m); print('model cached')"
 
 Write-Host ""
 Write-Host "Setup complete."

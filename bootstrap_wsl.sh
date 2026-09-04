@@ -30,7 +30,7 @@ pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
 pip install \
     "transformers>=4.49,<4.52" \
     accelerate \
-    autoawq \
+    bitsandbytes \
     qwen-vl-utils \
     av \
     decord \
@@ -47,7 +47,7 @@ log "== [4/4] pre-download model (~5-6 GB) =="
 export HF_HOME="$(pwd)/models"
 mkdir -p "$HF_HOME"
 python -c "from transformers import AutoProcessor, AutoModelForImageTextToText; \
-m='Qwen/Qwen2.5-VL-7B-Instruct-AWQ'; \
+m='Qwen/Qwen2.5-VL-7B-Instruct'; \
 AutoProcessor.from_pretrained(m); AutoModelForImageTextToText.from_pretrained(m); \
 print('model cached')"
 

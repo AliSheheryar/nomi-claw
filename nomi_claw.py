@@ -41,8 +41,8 @@ os.environ.setdefault("HF_HOME", str(Path(__file__).parent / "models"))
 # ============================================================================
 
 MODEL_IDS = {
-    "7B": "Qwen/Qwen2.5-VL-7B-Instruct-AWQ",
-    "3B": "Qwen/Qwen2.5-VL-3B-Instruct-AWQ",
+    "7B": "Qwen/Qwen2.5-VL-7B-Instruct",
+    "3B": "Qwen/Qwen2.5-VL-3B-Instruct",
 }
 
 PROXY_FPS_DEFAULT = 2          # VLM sampling density (frames/sec)
@@ -125,7 +125,7 @@ def detect_scenes(proxy: Path, workdir: Path) -> list[dict]:
     from scenedetect import detect, ContentDetector
     raw = detect(str(proxy), ContentDetector(threshold=SCENE_THRESHOLD))
     scenes = [
-        {"idx": i, "start": s.get_seconds(), "end": e.get_seconds()}
+        {"idx": i, "start": float(s.seconds), "end": float(e.seconds)}
         for i, (s, e) in enumerate(raw)
     ]
     if not scenes:
@@ -147,13 +147,19 @@ def _load_model(model_key: str):
     if _model is not None:
         return _model, _processor
     import torch
-    from transformers import AutoProcessor, AutoModelForImageTextToText
+    from transformers import AutoProcessor, AutoModelForImageTextToText, BitsAndBytesConfig
     mid = MODEL_IDS[model_key]
-    print(f"      loading {mid} ...")
+    print(f"      loading {mid} (bnb 4-bit) ...")
     _processor = AutoProcessor.from_pretrained(mid)
+    bnb = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_compute_dtype=torch.float16,
+    )
     _model = AutoModelForImageTextToText.from_pretrained(
         mid,
-        torch_dtype=torch.float16,
+        quantization_config=bnb,
         device_map="cuda",
         low_cpu_mem_usage=True,
     )
@@ -221,7 +227,12 @@ def _ask_vlm(window_path: Path, t0: float, t1: float, model_key: str) -> list[di
         padding=True, return_tensors="pt",
     ).to("cuda")
     with torch.no_grad():
-        gen = model.generate(**inputs, max_new_tokens=768, do_sample=False)
+        gen = model.generate(
+            **inputs,
+            max_new_tokens=768,
+            do_sample=False,
+            temperature=None, top_p=None, top_k=None,
+        )
     trimmed = [g[len(i):] for i, g in zip(inputs.input_ids, gen)]
     reply = processor.batch_decode(trimmed, skip_special_tokens=True)[0]
     return _parse_json_array(reply)

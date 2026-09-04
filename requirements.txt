@@ -2,7 +2,7 @@ torch
 torchvision
 transformers>=4.49,<4.52
 accelerate
-autoawq
+bitsandbytes
 qwen-vl-utils
 av
 decord

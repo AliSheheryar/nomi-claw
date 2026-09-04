@@ -32,13 +32,13 @@ ROOT = Path(__file__).parent.resolve()
 VENV_DIR = ROOT / ".venv"
 MODELS_DIR = ROOT / "models"
 
-MODEL_7B = "Qwen/Qwen2.5-VL-7B-Instruct-AWQ"
-MODEL_3B = "Qwen/Qwen2.5-VL-3B-Instruct-AWQ"
+MODEL_7B = "Qwen/Qwen2.5-VL-7B-Instruct"
+MODEL_3B = "Qwen/Qwen2.5-VL-3B-Instruct"
 
 PIP_DEPS = [
     "transformers>=4.49,<4.52",
     "accelerate",
-    "autoawq",
+    "bitsandbytes",
     "qwen-vl-utils",
     "av",
     "decord",
