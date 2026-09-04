@@ -158,17 +158,22 @@ def install_system_packages(no_system: bool) -> None:
 # python 3.11 discovery / venv
 # ---------------------------------------------------------------------------
 
+SUPPORTED_PY = ("Python 3.11", "Python 3.12")
+
+
 def _python311_available() -> str | None:
-    """Return path to a Python 3.11 interpreter if available, else None."""
+    """Return command for a supported Python (3.11 or 3.12) if available."""
     candidates: list[list[str]] = []
     if os.name == "nt":
-        candidates += [["py", "-3.11"], ["python"], ["python3.11"]]
+        candidates += [["py", "-3.11"], ["py", "-3.12"],
+                       ["python"], ["python3.12"], ["python3.11"]]
     else:
-        candidates += [["python3.11"], ["python3"], ["python"]]
+        candidates += [["python3.11"], ["python3.12"], ["python3"], ["python"]]
     for c in candidates:
         try:
             out = subprocess.run(c + ["--version"], capture_output=True, text=True)
-            if out.returncode == 0 and "Python 3.11" in (out.stdout + out.stderr):
+            banner = (out.stdout + out.stderr).strip()
+            if out.returncode == 0 and any(v in banner for v in SUPPORTED_PY):
                 return " ".join(c)
         except FileNotFoundError:
             continue
