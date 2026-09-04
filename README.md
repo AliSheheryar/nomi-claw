@@ -6,7 +6,21 @@ jump-cuts on busy beats and slow-mo on tender/romantic/laughter beats.
 
 ## Setup (once)
 
-Requires Python 3.11, ffmpeg on PATH, and a CUDA GPU. From `D:\nomi-claw`:
+### Fresh Windows install (nothing preinstalled)
+
+Right-click PowerShell → **Run as Administrator**, then from the repo root:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+.\bootstrap.ps1
+```
+
+This installs winget (if missing), Git, GitHub CLI, Python 3.11 + launcher,
+ffmpeg, Visual C++ Build Tools, checks the NVIDIA driver, then runs `setup.ps1`.
+
+### Machine already has Python 3.11 + ffmpeg
+
+From `D:\nomi-claw`:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\setup.ps1
