@@ -6,7 +6,21 @@ jump-cuts on busy beats and slow-mo on tender/romantic/laughter beats.
 
 ## Setup (once)
 
-### Fresh Windows install (nothing preinstalled)
+### Cross-platform (Python — recommended)
+
+Requires any Python 3.9+ on PATH. On Windows, run from an admin shell so
+system-package installs (Python 3.11, ffmpeg, git) can proceed:
+
+```bash
+python bootstrap.py                 # everything: sys deps + venv + torch + model
+python bootstrap.py --small         # use 3B model (~3 GB) instead of 7B
+python bootstrap.py --no-system     # skip OS package installs, only venv + pip
+python bootstrap.py --skip-model    # skip the 5-6 GB model download
+```
+
+Works on Windows (winget), Linux (apt/dnf), macOS (brew).
+
+### Windows only — PowerShell bootstrap
 
 Right-click PowerShell → **Run as Administrator**, then from the repo root:
 
