@@ -4,7 +4,16 @@
 $ErrorActionPreference = "Stop"
 
 Write-Host "==[1/7]== Python 3.11 check"
-try { $null = & py -3.11 -V } catch { throw "Python 3.11 missing. Install: winget install Python.Python.3.11" }
+$PyCmd = $null
+try { $null = & py -3.11 -V 2>$null; if ($LASTEXITCODE -eq 0) { $PyCmd = @("py","-3.11") } } catch {}
+if (-not $PyCmd) {
+    try {
+        $ver = & python --version 2>&1
+        if ($ver -match "Python 3\.1[1-9]") { $PyCmd = @("python") }
+    } catch {}
+}
+if (-not $PyCmd) { throw "Python 3.11+ not found. Install: winget install -e --id Python.Python.3.11  then reopen shell." }
+Write-Host "      using: $($PyCmd -join ' ')"
 
 Write-Host "==[2/7]== ffmpeg check"
 if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
@@ -12,7 +21,7 @@ if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
 }
 
 Write-Host "==[3/7]== venv"
-if (-not (Test-Path .\.venv)) { py -3.11 -m venv .venv }
+if (-not (Test-Path .\.venv)) { & $PyCmd[0] $PyCmd[1..($PyCmd.Length-1)] -m venv .venv }
 . .\.venv\Scripts\Activate.ps1
 
 Write-Host "==[4/7]== pip + torch (CUDA 12.4 wheels)"
